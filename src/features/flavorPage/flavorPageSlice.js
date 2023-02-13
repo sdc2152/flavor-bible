@@ -27,7 +27,6 @@ const flavorPageReducer = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    console.log('create flavor page reducers');
     builder
       .addCase(fetchFlavorsPaginated.pending, (state, action) => {
         state.status = 'loading';

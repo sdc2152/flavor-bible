@@ -6,6 +6,7 @@ import Paper from '@mui/material/Paper';
 
 import FlavorSearch from '../flavorSearch/FlavorSearch';
 import Graph from '../graph/Graph'
+import GraphDetail from '../graphDetail/GraphDetail';
 import PageGrid from '../../common/PageGrid';
 import {
   fetchFlavor,
@@ -25,7 +26,6 @@ const GraphPage = () => {
   const links = useSelector(selectLinks, shallowEqual);
 
   const handleSearchChange = (event, values, reason) => {
-    console.log('handle search change', values, reason);
     const newValue = values.find((value) => !parentFlavorIds.includes(value.id));
     if (newValue) {
       dispatch(fetchFlavor(newValue.id));
@@ -35,12 +35,10 @@ const GraphPage = () => {
   }
 
   const handleChipDelete = (id) => {
-    console.log('handle chip delete', id);
     dispatch(removeParentFlavor(id));
   }
 
   const handleNodeClick = (node) => {
-    console.log('handle node click', node);
     if (parentFlavorIds.includes(node.id)) {
       dispatch(removeParentFlavor(node.id));
     } else {
@@ -67,27 +65,37 @@ const GraphPage = () => {
       />
     )));
 
+  const paperStyle = { height: '100%', width: '100%' };
+
   return (
     <PageGrid>
-      <FlavorSearch
-        freeSolo
-        multiple
-        sx={{ mt: 1 }}
-        value={parentFlavors}
-        onChange={handleSearchChange}
-        renderInput={handleRenderInput}
-        renderTags={handleRenderTags}
-      />
+        <FlavorSearch
+          freeSolo
+          multiple
+          value={parentFlavors}
+          onChange={handleSearchChange}
+          renderInput={handleRenderInput}
+          renderTags={handleRenderTags}
+        />
       <Grid container spacing={2}>
-        <Grid md={6}>
-          <Graph
-            nodes={nodes}
-            links={links}
-            warmupTicks={20}
-            onNodeClick={handleNodeClick}
-          />
+        <Grid sm={6}>
+          <Paper sx={paperStyle}>
+            <Graph
+              nodes={nodes}
+              links={links}
+              warmupTicks={20}
+              onNodeClick={handleNodeClick}
+            />
+          </Paper>
         </Grid>
-        <Grid md={6}>
+        <Grid sm={6}>
+          <Paper sx={paperStyle}>
+            <GraphDetail
+              parents={parentFlavors}
+              nodes={nodes}
+              links={links}
+            />
+          </Paper>
         </Grid>
       </Grid>
     </PageGrid>

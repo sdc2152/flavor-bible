@@ -13,12 +13,9 @@ const FlavorSearch = (props) => {
   const options = useSelector(selectOptions);
 
   const handleInputChange = (event, value) => {
-    console.log('handle input', value);
     if (value) {
-      console.log('handle input fetch');
       dispatch(fetchOptions(value));
     } else {
-      console.log('handle input clear');
       dispatch(clearOptions());
     }
   }

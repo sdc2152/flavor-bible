@@ -6,7 +6,7 @@ const COLORS = [
   '#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4',
   '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8',
   '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#ffffff',
-  '#000000'
+  '#000000',
 ];
 
 const initialState = {
@@ -17,17 +17,42 @@ const initialState = {
   },
   links: {
     byId: {},
-    byParentId: {},
     allIds: [],
   },
   status: 'idle',
   error: null,
 };
 
+const addParentFlavor = (state, parent) => {
+  const { id, name } = parent;
+  const color = getNextColor(state);
+  if (state.flavors.byId[id] === undefined) {
+    state.flavors.allIds.push(id);
+  }
+  state.flavors.byId[id] = { id, name, color };
+  state.flavors.parentIds.push(id);
+  return state.flavors.byId[id];
+}
+
+const addChildFlavor = (state, child, parent) => {
+  const color = parent.color;
+  if (state.flavors.byId[child.id] === undefined) {
+    state.flavors.byId[child.id] = { ...child, color };
+    state.flavors.allIds.push(child.id);
+  } else if (!isParent(state, child.id)) {
+    state.flavors.byId[child.id].color = blendColor(
+      state.flavors.byId[child.id].color,
+      color
+    );
+  }
+  return state.flavors.byId[child.id];
+};
+
 const addLink = (state, link) => {
-  const id = state.links.allIds[state.links.allIds.length - 1] !== undefined
-    ? state.links.allIds[state.links.allIds.length - 1] + 1
-    : 0;
+  const lastIndex = state.links.allIds.length - 1;
+  const id = state.links.allIds[lastIndex] === undefined
+    ? 0
+    : state.links.allIds[lastIndex] + 1;
   state.links.allIds.push(id);
   state.links.byId[id] = { id, ...link };
 }
@@ -70,11 +95,12 @@ export const graphPageSlice = createSlice({
   reducers: {
     removeParentFlavor: (state, action) => {
       const id = action.payload;
-      const newFlavorsParentIds = state.flavors.parentIds.filter((flavorId) => flavorId !== id);
+      const newFlavorsParentIds = state.flavors.parentIds.filter((fId) => fId !== id);
       const newFlavorsById = {};
       const newFlavorsAllIds = [];
       const newLinksById = {};
       const newLinksAllIds = [];
+
       state.links.allIds.forEach((linkId) => {
         const link = state.links.byId[linkId];
         const parent = state.flavors.byId[link.source];
@@ -113,6 +139,7 @@ export const graphPageSlice = createSlice({
         byId: newLinksById,
         allIds: newLinksAllIds,
       }
+      console.log('state', current(state));
     },
     removeAllFlavors: (state, action) => {
       Object.assign(state, initialState);
@@ -125,25 +152,12 @@ export const graphPageSlice = createSlice({
       })
       .addCase(fetchFlavor.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        const { id, name, adjacent } = action.payload;
+        const { id, adjacent } = action.payload;
         if (isParent(state, id)) return; // already parent no need to add
-        const color = getNextColor(state);
-        if (state.flavors.byId[id] === undefined) {
-          state.flavors.allIds.push(id);
-        }
-        state.flavors.byId[id] = { id, name, color };
-        state.flavors.parentIds.push(id);
+        const parent = addParentFlavor(state, action.payload);
         adjacent.forEach((child) => {
-          if (state.flavors.byId[child.id] === undefined) {
-            state.flavors.byId[child.id] = { ...child, color };
-            state.flavors.allIds.push(child.id);
-          } else if (!isParent(state, child.id)) {
-            state.flavors.byId[child.id].color = blendColor(
-              state.flavors.byId[child.id].color,
-              color
-            );
-          }
-          addLink(state, { source: id, target: child.id });
+          addChildFlavor(state, child, parent);
+          addLink(state, { source: parent.id, target: child.id });
         });
       })
       .addCase(fetchFlavor.rejected, (state, action) => {
@@ -176,7 +190,9 @@ export const selectAllFlavors = (state) => (
     .map((id) => selectFlavor(state, id))
 );
 
-export const selectLinks = (state) => state.graphPage.links.allIds
-  .map((id) => selectLink(state, id));
+export const selectLinks = (state) => (
+  state.graphPage.links.allIds
+    .map((id) => selectLink(state, id))
+);
 
 export default graphPageSlice.reducer;

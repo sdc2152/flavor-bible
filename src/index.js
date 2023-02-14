@@ -6,10 +6,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import App from './App';
-import GraphPage from './features/graphPage/GraphPage';
-import FlavorPage from './features/flavorPage/FlavorPage';
-import FlavorDetailPage from './features/flavorDetailPage/FlavorDetailPage';
-import ErrorPage from './features/errorPage/ErrorPage';
+import GraphPage from './features/pages/GraphPage';
+import FlavorPage from './features/pages/FlavorPage';
+import FlavorDetailPage from './features/pages/FlavorDetailPage';
+import ErrorPage from './features/pages/ErrorPage';
 
 import reportWebVitals from './reportWebVitals';
 import './index.css';
@@ -29,7 +29,7 @@ const router = createBrowserRouter([
         element: <GraphPage />,
       },
       {
-        path: 'flavor',
+        path: 'flavor/page/:pageNumber',
         element: <FlavorPage />,
       },
       {

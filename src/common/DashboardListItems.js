@@ -16,7 +16,7 @@ const DashboardListItems = (
       </ListItemIcon>
       <ListItemText primary="Graph" />
     </ListItemButton>
-    <ListItemButton component={Link} to='/flavor'>
+    <ListItemButton component={Link} to='/flavor/page/1'>
       <ListItemIcon>
         <FormatListBulletedIcon />
       </ListItemIcon>

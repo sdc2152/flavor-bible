@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
-import { getFlavor } from './graphPageApi';
+import { getFlavor } from './graphApi';
 import { blendColor } from "../../common/colorBlender";
 
 const COLORS = [
@@ -80,17 +80,17 @@ const getNextColor = (state) => {
 const isParent = (state, flavorId) => state.flavors.parentIds.includes(flavorId);
 
 export const fetchFlavor = createAsyncThunk(
-  'graphPage/fetchFlavor',
+  'graph/fetchFlavor',
   async (id, { getState }) => {
     const state = getState();
-    if (isParent(state.graphPage, id)) return; // already parent no need to add
+    if (isParent(state.graph, id)) return; // already parent no need to add
     const response = await getFlavor(id);
     return response;
   }
 );
 
-export const graphPageSlice = createSlice({
-  name: 'graphPage',
+export const graphSlice = createSlice({
+  name: 'graph',
   initialState,
   reducers: {
     removeParentFlavor: (state, action) => {
@@ -139,7 +139,6 @@ export const graphPageSlice = createSlice({
         byId: newLinksById,
         allIds: newLinksAllIds,
       }
-      console.log('state', current(state));
     },
     removeAllFlavors: (state, action) => {
       Object.assign(state, initialState);
@@ -170,29 +169,32 @@ export const graphPageSlice = createSlice({
 export const {
   removeParentFlavor,
   removeAllFlavors,
-} = graphPageSlice.actions;
+} = graphSlice.actions;
 
-export const selectFlavor = (state, id) => state.graphPage.flavors.byId[id];
+export const selectFlavor = (state, id) => state.graph.flavors.byId[id];
 
-export const selectLink = (state, id) => state.graphPage.links.byId[id];
+export const selectLink = (state, id) => state.graph.links.byId[id];
 
 export const selectParentFlavorIds = (state) => (
-  state.graphPage.flavors.parentIds
+  state.graph.flavors.parentIds
 );
 
 export const selectParentFlavors = (state) => (
-  state.graphPage.flavors.parentIds
+  state.graph.flavors.parentIds
     .map((id) => selectFlavor(state, id))
 );
 
 export const selectAllFlavors = (state) => (
-  state.graphPage.flavors.allIds
+  state.graph.flavors.allIds
     .map((id) => selectFlavor(state, id))
 );
 
+export const selectFlavorsById = (state) => state.graph.flavors.byId;
+
 export const selectLinks = (state) => (
-  state.graphPage.links.allIds
+  state.graph.links.allIds
     .map((id) => selectLink(state, id))
 );
 
-export default graphPageSlice.reducer;
+
+export default graphSlice;

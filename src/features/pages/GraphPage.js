@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Unstable_Grid2';
 import Paper from '@mui/material/Paper';
 
-import FlavorSearch from '../flavorSearch/FlavorSearch';
+import Search from '../search/Search';
 import Graph from '../graph/Graph'
 import GraphDetail from '../graphDetail/GraphDetail';
 import PageGrid from '../../common/PageGrid';
@@ -16,14 +16,16 @@ import {
   selectParentFlavors,
   selectAllFlavors,
   selectLinks,
-} from './graphPageSlice';
+  selectFlavorsById,
+} from '../graph/graphSlice';
 
 const GraphPage = () => {
   const dispatch = useDispatch();
+
   const parentFlavorIds = useSelector(selectParentFlavorIds);
   const parentFlavors = useSelector(selectParentFlavors, shallowEqual);
-  const nodes = useSelector(selectAllFlavors, shallowEqual);
   const links = useSelector(selectLinks, shallowEqual);
+  const flavorsById = useSelector(selectFlavorsById);
 
   const handleSearchChange = (event, values, reason) => {
     const newValue = values.find((value) => !parentFlavorIds.includes(value.id));
@@ -36,14 +38,6 @@ const GraphPage = () => {
 
   const handleChipDelete = (id) => {
     dispatch(removeParentFlavor(id));
-  }
-
-  const handleNodeClick = (node) => {
-    if (parentFlavorIds.includes(node.id)) {
-      dispatch(removeParentFlavor(node.id));
-    } else {
-      dispatch(fetchFlavor(node.id));
-    }
   }
 
   const handleRenderInput = (params) => (
@@ -69,7 +63,7 @@ const GraphPage = () => {
 
   return (
     <PageGrid>
-        <FlavorSearch
+        <Search
           freeSolo
           multiple
           value={parentFlavors}
@@ -80,19 +74,14 @@ const GraphPage = () => {
       <Grid container spacing={2}>
         <Grid sm={6}>
           <Paper sx={paperStyle}>
-            <Graph
-              nodes={nodes}
-              links={links}
-              warmupTicks={20}
-              onNodeClick={handleNodeClick}
-            />
+            <Graph />
           </Paper>
         </Grid>
         <Grid sm={6}>
           <Paper sx={paperStyle}>
             <GraphDetail
               parents={parentFlavors}
-              nodes={nodes}
+              flavorsById={flavorsById}
               links={links}
             />
           </Paper>

@@ -1,14 +1,12 @@
 import { useSelector, useDispatch } from 'react-redux';
-
 import Autocomplete from '@mui/material/Autocomplete';
-
 import {
   fetchOptions,
   clearOptions,
   selectOptions,
-} from './flavorSearchSlice';
+} from './searchSlice';
 
-const FlavorSearch = (props) => {
+const Search = (props) => {
   const dispatch = useDispatch();
   const options = useSelector(selectOptions);
 
@@ -30,4 +28,4 @@ const FlavorSearch = (props) => {
   );
 }
 
-export default FlavorSearch;
+export default Search;

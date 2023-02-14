@@ -1,16 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import flavorSearchReducer from '../features/flavorSearch/flavorSearchSlice';
-import graphPageReducer from '../features/graphPage/graphPageSlice';
-import flavorPageReducer from '../features/flavorPage/flavorPageSlice';
-import flavorDetailPageReducer from '../features/flavorDetailPage/flavorDetailPageSlice';
-import graphDetailSlice from '../features/graphDetail/graphDetailSlice';
+import graphSlice from '../features/graph/graphSlice';
+import flavorSlice from '../features/flavor/flavorSlice';
+import searchSlice from '../features/search/searchSlice';
 
 export const store = configureStore({
   reducer: {
-    flavorSearch: flavorSearchReducer,
-    graphPage: graphPageReducer,
-    flavorPage: flavorPageReducer,
-    flavorDetailPage: flavorDetailPageReducer,
-    [graphDetailSlice.name]: graphDetailSlice.reducer,
+    [graphSlice.name]: graphSlice.reducer,
+    [flavorSlice.name]: flavorSlice.reducer,
+    [searchSlice.name]: searchSlice.reducer,
   },
 });

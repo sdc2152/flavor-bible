@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchFlavorSuggestions } from './flavorSearchApi';
+import { fetchSearchSuggestions } from './searchApi';
 
 const initialState = {
   options: [],
@@ -7,16 +7,18 @@ const initialState = {
   error: null,
 };
 
+const name = 'search';
+
 export const fetchOptions = createAsyncThunk(
-  'flavorSearch/fetchOptions',
+  `${name}/fetchOptions`,
   async (searchString) => {
-    const response = await fetchFlavorSuggestions(searchString);
+    const response = await fetchSearchSuggestions(searchString);
     return response;
   }
 );
 
-export const flavorSearchSlice = createSlice({
-  name: 'flavorSearch',
+export const searchSlice = createSlice({
+  name,
   initialState,
   reducers: {
     clearOptions: (state, action) => {
@@ -39,8 +41,8 @@ export const flavorSearchSlice = createSlice({
   },
 });
 
-export const { clearOptions } = flavorSearchSlice.actions;
+export const { clearOptions } = searchSlice.actions;
 
-export const selectOptions = (state) => state.flavorSearch.options;
+export const selectOptions = (state) => state[name].options;
 
-export default flavorSearchSlice.reducer;
+export default searchSlice;

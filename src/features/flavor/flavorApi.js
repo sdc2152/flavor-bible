@@ -8,3 +8,8 @@ export const getFlavorListPaginated = async (page) => {
   return fetch(`${BACKEND_URL}/api/flavor/page/${page}`)
     .then(parseJSON);
 }
+
+export const getFlavor = (id) => (
+  fetch(`${BACKEND_URL}/api/flavor/${id}`)
+    .then(parseJSON)
+);

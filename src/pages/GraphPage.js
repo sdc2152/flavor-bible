@@ -5,10 +5,10 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 
-import Search from '../search/Search';
-import Graph from '../graph/Graph'
-import GraphDetail from '../graphDetail/GraphDetail';
-import PageGrid from '../../common/PageGrid';
+import Search from '../features/search/Search';
+import Graph from '../features/graph/Graph'
+import GraphDetail from '../features/graphDetail/GraphDetail';
+import PageGrid from '../common/PageGrid';
 import {
   fetchFlavor,
   removeParentFlavor,
@@ -17,7 +17,7 @@ import {
   selectParentFlavors,
   selectLinks,
   selectFlavorsById,
-} from '../graph/graphSlice';
+} from '../features/graph/graphSlice';
 
 const GraphPage = () => {
   const dispatch = useDispatch();
@@ -66,6 +66,7 @@ const GraphPage = () => {
           <Search
             freeSolo
             multiple
+            filterSelectedOptions
             value={parentFlavors}
             onChange={handleSearchChange}
             renderInput={handleRenderInput}

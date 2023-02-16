@@ -10,6 +10,7 @@ const Search = (props) => {
   const dispatch = useDispatch();
   const options = useSelector(selectOptions);
 
+
   const handleInputChange = (event, value) => {
     if (value) {
       dispatch(fetchOptions(value));
@@ -24,6 +25,7 @@ const Search = (props) => {
       onInputChange={handleInputChange}
       options={options}
       getOptionLabel={(option) => option.name}
+      isOptionEqualToValue={(option, value) => option.name === value.name}
     />
   );
 }

@@ -12,8 +12,8 @@ import {
   fetchFlavorsPaginated,
   selectFlavors,
   selectPagination,
-} from '../flavor/flavorSlice';
-import ContainedElement from '../../common/ContainedElement';
+} from '../features/flavor/flavorSlice';
+import ContainedElement from '../common/ContainedElement';
 
 const FlavorPage = () => {
   const dispatch = useDispatch();

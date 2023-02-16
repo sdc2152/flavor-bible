@@ -6,10 +6,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import App from './App';
-import GraphPage from './features/pages/GraphPage';
-import FlavorPage from './features/pages/FlavorPage';
-import FlavorDetailPage from './features/pages/FlavorDetailPage';
-import ErrorPage from './features/pages/ErrorPage';
+import GraphPage from './pages/GraphPage';
+import FlavorPage from './pages/FlavorPage';
+import FlavorDetailPage from './pages/FlavorDetailPage';
+import ErrorPage from './pages/ErrorPage';
 
 import reportWebVitals from './reportWebVitals';
 import './index.css';

@@ -35,8 +35,7 @@ const Graph = () => {
     }
   }, [parent]);
 
-  // zoom to fit graph
-  // TODO: does not zoom to fit on back or forward buttons
+  // zoom to fit graph when nodes adjusted or graph size is changed
   const graphRef = React.useRef(null);
   const zoomDuration = 400;
   const zoomPadding = 100;
@@ -46,7 +45,7 @@ const Graph = () => {
         graphRef.current.zoomToFit(zoomDuration, zoomPadding);
       }, 1);
     }
-  }, [nodes]);
+  }, [nodes, width, height]);
 
   const handleNodeClick = (node) => {
     if (parentFlavorIds.includes(node.id)) {
@@ -65,7 +64,7 @@ const Graph = () => {
           graphData={graphData}
           width={width}
           height={height}
-          warmupTicks={50}
+          warmupTicks={100}
           />) : null}
     </ContainedElement>
   );

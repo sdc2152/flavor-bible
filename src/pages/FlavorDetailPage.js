@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Box from '@mui/material/Box';
@@ -10,53 +10,118 @@ import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Checkbox, { checkboxClasses } from '@mui/material/Checkbox';
+import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import TextField from '@mui/material/TextField';
+import Chip from '@mui/material/Chip';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogActions from '@mui/material/DialogActions';
+
 import AddIcon from '@mui/icons-material/Add';
 import Delete from '@mui/icons-material/Delete';
 import Check from '@mui/icons-material/Check';
 import Addchart from '@mui/icons-material/Addchart';
-
-import Modal from '@mui/material/Modal';
 
 import {
   selectFlavor,
   selectAdjacentFlavors,
   fetchFlavorDetail,
   init as flavorInit,
-} from '../flavor/flavorSlice';
-import ContainedElement from '../../common/ContainedElement';
-import defaultImage from '../../common/images/default-image.png';
-import { init as graphInit , fetchFlavors } from '../graph/graphSlice';
+} from '../features/flavor/flavorSlice';
+import ContainedElement from '../common/ContainedElement';
+import defaultImage from '../common/images/default-image.png';
+import { init as graphInit , fetchFlavors } from '../features/graph/graphSlice';
+import Search from '../features/search/Search';
 
 const AddFlavorModal = ({ open, handleClose }) => {
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
+  const [flavors, setFlavors] = React.useState([]);
+
+  const handleSearchChange = (event, values, reason) => {
+    if (reason === 'selectOption') {
+      const flavorIds = flavors.map((flavor) => flavor.id);
+      const newValue = values.find((value) => !flavorIds.includes(value.id));
+      if (newValue) {
+        setFlavors([...flavors, newValue]);
+      }
+    } else if (reason === 'clear') {
+      setFlavors([]);
+    }
+  }
+
+  const handleRenderInput = (params) => (
+    <TextField {...params} variant="outlined" label="Search flavors" />
+  );
+
+  const handleRenderTags = (value, getTagProps) => {
+    return value.map((option, index) => {
+      return <Chip variant="outlined" label={option.name} {...getTagProps({ index })} />
+    }
+    )
+  }
+
   return (
-    <Modal
+    <Dialog
       open={open}
       onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
     >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Text in a modal
-        </Typography>
-        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-        </Typography>
-      </Box>
-    </Modal>
+      <DialogTitle id="alert-dialog-title">
+        Add Flavors
+      </DialogTitle>
+      <DialogContent>
+        <Search
+          freeSolo
+          multiple
+          filterSelectedOptions
+          value={flavors}
+          onChange={handleSearchChange}
+          renderInput={handleRenderInput}
+          renderTags={handleRenderTags}
+          sx={{ minWidth: '500px', mt: 1 }}
+          />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleClose} autoFocus>
+          Add
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+const DeleteFlavorModal = ({ open, handleClose }) => {
+  const handleCancel = () => handleClose(false);
+  const handleDelete = () => handleClose(true);
+
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">
+        Delete Flavor
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          This action will not delete the selected flavors it will unlink them from the current flavor.
+          Are you sure you would like to remove these flavors?
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCancel}>Cancel</Button>
+        <Button onClick={handleDelete} autoFocus>
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
@@ -81,11 +146,12 @@ const FlavorDisplay = ({ flavor }) => {
         />
       <Typography variant="h4">{flavor.name}</Typography>
 
-      <Box sx={{ p: 2, display: 'grid', gridTemplateRows: 'auto 1fr' }}>
-        <Box>
-          <Typography variant="h5">Tags</Typography>
+      <Box sx={{ p: 2, display: 'grid', gridTemplateRows: 'auto auto 1fr' }}>
+        <Box sx={{ display: 'flex' }}>
+          <Typography variant="h5" sx={{ flexGrow: 1 }}>Tags</Typography>
           <Button startIcon={<AddIcon />}>Add</Button>
         </Box>
+        <Divider />
         <Box></Box>
       </Box>
 
@@ -117,6 +183,7 @@ const FlavorCheckListItem = ({ flavor, handleCheckToggle, checked }) => (
         checked={checked}
         tabIndex={-1}
         disableRipple
+        sx={{ p: 0, pl: 1 }}
         />
     </ListItemIcon>
     <ListItemText primary={flavor.name} />
@@ -135,36 +202,40 @@ const MemoFlavorListItem = React.memo(
   ),
   (prevProps, newProps) => (
     (prevProps.checked.indexOf(prevProps.flavor.id) === -1) === (newProps.checked.indexOf(newProps.flavor.id) === -1)
-    && prevProps.select === newProps.select
-));
+      && prevProps.select === newProps.select
+  ));
 
 const AdjacentDisplay = ({ flavor, adjacent }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
+  const [openAdd, setOpenAdd] = React.useState(false);
+  const [openDelete, setOpenDelete] = React.useState(false);
   const [select, setSelect] = React.useState(false);
   const [checked, setChecked] = React.useState([]);
   const checkedRef = useRef();
   checkedRef.current = checked;
 
-  const handleAddClick = () => setOpen(true);
-  const handleAddClose = () => setOpen(false);
+  const handleAddClick = () => setOpenAdd(true);
+  const handleAddClose = () => setOpenAdd(false);
 
   const handleSelectToggle = () => {
     setChecked([]);
     setSelect(!select);
   }
 
-  const handleDeleteClick = () => console.log('delete');
+  const handleDeleteClick = () => setOpenDelete(true);
+  const handleDeleteClose = (isDelete) => {
+    // get selected and make unlink call
+    setOpenDelete(false);
+  }
 
-  const handleAddToChartClick = async () => {
+  const handleAddToChartClick = () => {
     dispatch(graphInit());
     dispatch(fetchFlavors([flavor.id, ...checked]));
     navigate('/graph');
   };
 
   const handleCheckToggle = (flavor) => () => {
-    console.log(flavor.name);
     const index = checkedRef.current.indexOf(flavor.id);
     const newChecked = [...checkedRef.current];
     if (index === -1) {
@@ -176,23 +247,29 @@ const AdjacentDisplay = ({ flavor, adjacent }) => {
   }
 
   return (
-    <Box sx={{ height: '100%', p: 2, display: 'grid', gridTemplateRows: 'auto 1fr auto' }}>
+    <Box sx={{ height: '100%', p: 2, display: 'grid', gridTemplateRows: 'auto auto 1fr' }}>
       <Box>
-        <Typography variant="h5">Adjacent Flavors</Typography>
-        <AddFlavorModal open={open} handleClose={handleAddClose} />
-        <Button
-          startIcon={<AddIcon />}
-          onClick={handleAddClick}
-          disabled={select}
-        >
-          Add
-        </Button>
-        <Button
-          startIcon={<Check />}
-          onClick={handleSelectToggle}
-        >
-          Select
-        </Button>
+        <AddFlavorModal open={openAdd} handleClose={handleAddClose} />
+        <DeleteFlavorModal open={openDelete} handleClose={handleDeleteClose} />
+        <Box sx={{ display: 'flex' }}>
+          <Typography variant="h5" sx={{ flexGrow: 1 }}>Adjacent</Typography>
+          <Box>
+            <Button
+              startIcon={<AddIcon />}
+              onClick={handleAddClick}
+              disabled={select}
+            >
+              Add
+            </Button>
+            <Button
+              startIcon={<Check />}
+              onClick={handleSelectToggle}
+            >
+              Select
+            </Button>
+          </Box>
+        </Box>
+
         {select
           ? (
             <Box>
@@ -208,12 +285,15 @@ const AdjacentDisplay = ({ flavor, adjacent }) => {
                 onClick={handleAddToChartClick}
                 disabled={checked.length === 0}
               >
-                Create Graph
+                Graph
               </Button>
             </Box>
           )
           : null}
       </Box>
+
+      <Divider />
+
       <ContainedElement style={{ overflowX: 'auto' }}>
         <List>
           {adjacent.map((adj) => (

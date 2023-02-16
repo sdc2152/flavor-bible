@@ -20,20 +20,32 @@ const Graph = () => {
     nodes: nodes.map((n) => ({ ...n })),
     links: links.map((l) => ({ ...l })),
   }
-  // resize info
+
+  // resize graph on parent resize
   const parent = React.useRef(null);
   const [height, setHeight] = React.useState(null);
   const [width, setWidth] = React.useState(null);
-
   React.useEffect(() => {
     const resizeObserver = new ResizeObserver((event) => {
       setWidth(event[0].contentBoxSize[0].inlineSize);
       setHeight(event[0].contentBoxSize[0].blockSize);
     });
-    if (parent) {
+    if (parent.current) {
       resizeObserver.observe(parent.current);
     }
   }, [parent]);
+
+  // zoom to fit graph
+  const graphRef = React.useRef(null);
+  const zoomDuration = 400;
+  const zoomPadding = 100;
+  React.useEffect(() => {
+    if (graphRef.current) {
+      setTimeout(() => {
+        graphRef.current.zoomToFit(zoomDuration, zoomPadding);
+      }, 1);
+    }
+  }, [nodes]);
 
   const handleNodeClick = (node) => {
     if (parentFlavorIds.includes(node.id)) {
@@ -46,13 +58,14 @@ const Graph = () => {
   return (
     <ContainedElement ref={parent}>
       {(parent && height && width) ? (
-      <ForceGraph2D
-        onNodeClick={handleNodeClick}
-        graphData={graphData}
-        width={width}
-        height={height}
-        warmupTicks={20}
-      />) : null}
+        <ForceGraph2D
+          ref={graphRef}
+          onNodeClick={handleNodeClick}
+          graphData={graphData}
+          width={width}
+          height={height}
+          warmupTicks={50}
+          />) : null}
     </ContainedElement>
   );
 }

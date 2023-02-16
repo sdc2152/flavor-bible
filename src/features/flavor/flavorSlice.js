@@ -51,7 +51,6 @@ const flavorSlice = createSlice({
   initialState,
   reducers: {
     init: (state, action) => {
-      console.log('init');
       return initialState;
     },
   },
@@ -103,7 +102,6 @@ const flavorSlice = createSlice({
 export const { init } = flavorSlice.actions;
 
 export const selectAdjacentFlavors = (state, id) => {
-  console.log(state[name]);
   return state[name].links.allIds.reduce((a, lId) => {
     const link = state[name].links.byId[lId];
     if (link.source === id) {

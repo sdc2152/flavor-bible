@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 
 import '@fontsource/roboto/500.css';
@@ -10,7 +10,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Container from '@mui/material/Container';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
@@ -29,14 +28,20 @@ const App = () => {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="absolute" open={open} drawerwidth={drawerWidth}>
-        <Toolbar sx={{ pr: '24px' }} >
+      <AppBar
+        position="absolute"
+        open={open}
+        drawerwidth={drawerWidth}
+        sx={{ boxShadow: 0, bgcolor: 'background.paper', color: 'primary.main' }}
+      >
+        <Toolbar sx={{ pr: '24px' }}>
           <IconButton
             edge="start"
             color="inherit"
             aria-label="open drawer"
             onClick={toggleDrawer}
             sx={{
+              color: 'primary.main',
               marginRight: '36px',
               ...(open && { display: 'none' }),
             }}
@@ -53,6 +58,7 @@ const App = () => {
             Flavor Bible
           </Typography>
         </Toolbar>
+        <Divider />
       </AppBar>
 
       <Drawer variant="permanent" open={open} width={drawerWidth}>
@@ -93,9 +99,9 @@ const App = () => {
       >
         <Toolbar />
 
-        <Container maxWidth="lg" sx={{ pt: 4, pb: 4 }}>
+        <Box>
           <Outlet />
-        </Container>
+        </Box>
       </Box>
     </Box>
   );

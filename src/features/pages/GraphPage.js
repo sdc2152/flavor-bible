@@ -2,7 +2,8 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Unstable_Grid2';
-import Paper from '@mui/material/Paper';
+import Divider from '@mui/material/Divider';
+import Box from '@mui/material/Box';
 
 import Search from '../search/Search';
 import Graph from '../graph/Graph'
@@ -14,7 +15,6 @@ import {
   removeAllFlavors,
   selectParentFlavorIds,
   selectParentFlavors,
-  selectAllFlavors,
   selectLinks,
   selectFlavorsById,
 } from '../graph/graphSlice';
@@ -48,43 +48,49 @@ const GraphPage = () => {
     tagValue.map((option, index) => (
       <Chip
         avatar={
-          <div style={{
-            minWidth: '20px',
-            borderRadius: '100%',
-            backgroundColor: option.color,
-          }}></div>}
+        <div style={{
+          minWidth: '20px',
+          borderRadius: '100%',
+          backgroundColor: option.color,
+        }}></div>}
         label={option.name}
         {...getTagProps({ index })}
         onDelete={() => handleChipDelete(option.id)}
-      />
+        />
     )));
-
-  const paperStyle = { height: '100%', width: '100%' };
 
   return (
     <PageGrid>
-        <Search
-          freeSolo
-          multiple
-          value={parentFlavors}
-          onChange={handleSearchChange}
-          renderInput={handleRenderInput}
-          renderTags={handleRenderTags}
-        />
-      <Grid container spacing={2}>
-        <Grid sm={6}>
-          <Paper sx={paperStyle}>
-            <Graph />
-          </Paper>
+      <Box sx={{ bgcolor: 'background.paper' }}>
+        <Box sx={{ p: 2 }}>
+          <Search
+            freeSolo
+            multiple
+            value={parentFlavors}
+            onChange={handleSearchChange}
+            renderInput={handleRenderInput}
+            renderTags={handleRenderTags}
+            />
+        </Box>
+        <Divider />
+      </Box>
+      <Grid container>
+        <Grid sm={8}>
+          <Graph />
         </Grid>
-        <Grid sm={6}>
-          <Paper sx={paperStyle}>
+        <Grid sm={4}>
+          <Box sx={{
+            bgcolor: 'background.paper',
+            height: '100%',
+            width: '100%',
+            boxShadow: '0 10px 10px 0 rgb(0 0 0 / 20%)',
+          }} >
             <GraphDetail
               parents={parentFlavors}
               flavorsById={flavorsById}
               links={links}
-            />
-          </Paper>
+              />
+          </Box>
         </Grid>
       </Grid>
     </PageGrid>

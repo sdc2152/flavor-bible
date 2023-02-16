@@ -36,6 +36,7 @@ const Graph = () => {
   }, [parent]);
 
   // zoom to fit graph
+  // TODO: does not zoom to fit on back or forward buttons
   const graphRef = React.useRef(null);
   const zoomDuration = 400;
   const zoomPadding = 100;

@@ -23,10 +23,11 @@ import {
   selectFlavor,
   selectAdjacentFlavors,
   fetchFlavorDetail,
-  init,
+  init as flavorInit,
 } from '../flavor/flavorSlice';
 import ContainedElement from '../../common/ContainedElement';
 import defaultImage from '../../common/images/default-image.png';
+import { init as graphInit , fetchFlavors } from '../graph/graphSlice';
 
 const AddFlavorModal = ({ open, handleClose }) => {
   const style = {
@@ -138,6 +139,8 @@ const MemoFlavorListItem = React.memo(
 ));
 
 const AdjacentDisplay = ({ flavor, adjacent }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [select, setSelect] = React.useState(false);
   const [checked, setChecked] = React.useState([]);
@@ -147,11 +150,18 @@ const AdjacentDisplay = ({ flavor, adjacent }) => {
   const handleAddClick = () => setOpen(true);
   const handleAddClose = () => setOpen(false);
 
-  const handleSelectToggle = () => setSelect(!select);
+  const handleSelectToggle = () => {
+    setChecked([]);
+    setSelect(!select);
+  }
 
   const handleDeleteClick = () => console.log('delete');
 
-  const handleAddToChartClick = () => console.log('add to chart');
+  const handleAddToChartClick = async () => {
+    dispatch(graphInit());
+    dispatch(fetchFlavors([flavor.id, ...checked]));
+    navigate('/graph');
+  };
 
   const handleCheckToggle = (flavor) => () => {
     console.log(flavor.name);
@@ -198,7 +208,7 @@ const AdjacentDisplay = ({ flavor, adjacent }) => {
                 onClick={handleAddToChartClick}
                 disabled={checked.length === 0}
               >
-                Add To Graph
+                Create Graph
               </Button>
             </Box>
           )
@@ -230,7 +240,7 @@ const FlavorDetailPage = () => {
 
   React.useEffect(() => {
     dispatch(fetchFlavorDetail(flavorId));
-    return () => dispatch(init());
+    return () => dispatch(flavorInit());
   }, [flavorId]);
 
   return flavor && adjacent

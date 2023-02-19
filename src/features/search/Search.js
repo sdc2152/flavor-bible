@@ -26,6 +26,10 @@ const Search = (props) => {
       options={options}
       getOptionLabel={(option) => option.name}
       isOptionEqualToValue={(option, value) => option.name === value.name}
+      filterOptions={(options, state) => {
+        console.log(options, state);
+        return options;
+      }}
     />
   );
 }

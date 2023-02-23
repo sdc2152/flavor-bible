@@ -6,14 +6,15 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+
 import ContainedElement from '../common/ContainedElement';
 import defaultImage from '../common/images/default-image.png';
-import AdjacentFlavors from '../features/adjacentFlavors/AdjacentFlavors';
+import FlavorAdjacent from '../features/flavorAdjacent/FlavorAdjacent';
+import FlavorTags from '../features/flavorTags/FlavorTags';
+
 import {
   selectFlavor,
-  selectAdjacentFlavors,
   fetchFlavorDetail,
   init as flavorInit,
 } from '../features/flavor/flavorSlice';
@@ -23,7 +24,6 @@ const FlavorDetailPage = () => {
   const params = useParams();
   const flavorId = +params.id;
   const flavor = useSelector(selectFlavor(flavorId));
-  const adjacent = useSelector(selectAdjacentFlavors(flavorId));
 
   React.useEffect(() => {
     dispatch(fetchFlavorDetail(flavorId));
@@ -39,13 +39,23 @@ const FlavorDetailPage = () => {
     }
   }
 
-  return flavor && adjacent
+  const handleEditClick = () => {
+    console.log('edit click');
+  }
+
+  return flavor
     ?
     <ContainedElement>
       <Container disableGutters sx={{ height: '100%', bgcolor: 'background.paper' }}>
         <Grid container sx={{ height: '100%' }}>
           <Grid md={7} sm={12} sx={{ borderRight: '1px solid', borderColor: 'divider' }}>
-            <Box>
+            <Box
+              sx={{
+                height: '100%',
+                p: 2,
+                display: 'grid',
+                gridTemplateRows: 'auto auto 1fr',
+              }}>
               <img
                 src={item.img}
                 srcSet={item.img}
@@ -54,19 +64,17 @@ const FlavorDetailPage = () => {
                 alt={item.title}
                 loading="lazy"
                 />
-              <Typography variant="h4">{flavor.name}</Typography>
-              <Box sx={{ p: 2, display: 'grid', gridTemplateRows: 'auto auto 1fr' }}>
-                <Box sx={{ display: 'flex' }}>
-                  <Typography variant="h5" sx={{ flexGrow: 1 }}>Tags</Typography>
-                  <Button startIcon={<AddIcon />}>Add</Button>
-                </Box>
-                <Divider />
-                <Box></Box>
+              <Box sx={{ display: 'flex' }}>
+                <Typography sx={{ flexGrow: 1 }} variant="h4">{flavor.name}</Typography>
+                <Button startIcon={<EditIcon />} onClick={handleEditClick} >
+                  Edit
+                </Button>
               </Box>
+              <FlavorTags flavorId={flavorId} />
             </Box>
           </Grid>
           <Grid md={5} sm={12}>
-            <AdjacentFlavors flavor={flavor} adjacent={adjacent} />
+            <FlavorAdjacent flavorId={flavorId} />
           </Grid>
         </Grid>
       </Container>

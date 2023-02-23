@@ -19,6 +19,10 @@ const initialState = {
     byId: {},
     allIds: [],
   },
+  filter: {
+    minLink: null,
+    maxLink: null,
+  },
   status: 'idle',
   error: null,
 };
@@ -110,6 +114,14 @@ export const graphSlice = createSlice({
   reducers: {
     init: (state, action) => initialState,
 
+    setFilterMinLink: (state, action) => {
+      state.filter.minLink = action.payload;
+    },
+
+    setFilterMaxLink: (state, action) => {
+      state.filter.maxLink = action.payload;
+    },
+
     removeParentFlavor: (state, action) => {
       const id = action.payload;
       const newFlavorsParentIds = state.flavors.parentIds.filter((fId) => fId !== id);
@@ -193,6 +205,8 @@ export const graphSlice = createSlice({
 
 export const {
   init,
+  setFilterMinLink,
+  setFilterMaxLink,
   removeParentFlavor,
   removeAllFlavors,
 } = graphSlice.actions;
@@ -200,6 +214,8 @@ export const {
 export const selectFlavor = (state, id) => state.graph.flavors.byId[id];
 
 export const selectLink = (state, id) => state.graph.links.byId[id];
+
+export const selectFlavorsById = (state) => state.graph.flavors.byId;
 
 export const selectParentFlavorIds = (state) => (
   state.graph.flavors.parentIds
@@ -210,17 +226,25 @@ export const selectParentFlavors = (state) => (
   .map((id) => selectFlavor(state, id))
 );
 
-export const selectAllFlavors = (state) => (
-  state.graph.flavors.allIds
+export const selectAllFlavors = (state) => {
+  // TODO: should i just do this in a query? yes
+  //
+  // const minLink = state.graph.filter.minLink;
+  // const maxLink = state.graph.filter.maxLink;
+  // // init filterids to just parent ids
+  // // create hist of target links flavorId: linkCount
+  // // add ids to filterids if their linkCount is high enough
+  return state.graph.flavors.allIds
   .map((id) => selectFlavor(state, id))
-);
-
-export const selectFlavorsById = (state) => state.graph.flavors.byId;
+}
 
 export const selectLinks = (state) => (
   state.graph.links.allIds
   .map((id) => selectLink(state, id))
 );
+
+export const selectFilterMinLink = (state) => state.graph.filter.minLink;
+export const selectFilterMaxLink = (state) => state.graph.filter.maxLink;
 
 
 export default graphSlice;

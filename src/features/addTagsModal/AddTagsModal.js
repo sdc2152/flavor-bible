@@ -5,42 +5,48 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-
 import Search from '../search/Search';
 import FocusTextField from '../../common/FocusTextField';
 
-const AddFlavorModal = ({ open, handleClose }) => {
-  const [flavors, setFlavors] = React.useState([]);
+const AddTagsModal = ({ open, handleClose }) => {
+  const [tags, setTags] = React.useState([]);
 
   const handleAdd = () => {
-    handleClose(flavors);
-    setFlavors([]);
+    handleClose(tags);
+    setTags([]);
   }
   const handleCancel = () => {
     handleClose();
-    setFlavors([]);
+    setTags([]);
   }
 
   const handleSearchChange = (event, values, reason) => {
     switch(reason) {
       case 'selectOption':
-        const flavorIds = flavors.map((flavor) => flavor.id);
-        const newValue = values.find((value) => !flavorIds.includes(value.id));
-        if (newValue) {
-          setFlavors([...flavors, newValue]);
+        const newTag = values[values.length-1];
+        const tagExists = tags.find((tag) => tag.name === newTag.name);
+        if (!tagExists) {
+          setTags([...tags, newTag]);
         }
-      break;
+        break;
+      case 'createOption':
+        const name = values[values.length-1];
+        const nameExists = tags.find((tag) => tag.name === name);
+        if (!nameExists) {
+          setTags([...tags, { id: null, name }]);
+        }
+        break;
       case 'clear':
-        setFlavors([]);
-      break;
+        setTags([]);
+        break;
       case 'removeOption':
-        setFlavors(values);
-      break;
+        setTags(values)
+        break;
     }
   }
 
   const handleRenderInput = (params) => {
-    return <FocusTextField {...params} variant="outlined" label="Search Flavors" />;
+    return <FocusTextField {...params} variant="outlined" label="Search Tags" />;
   }
 
   const handleRenderTags = (value, getTagProps) => (value.map((option, index) => (
@@ -55,15 +61,15 @@ const AddFlavorModal = ({ open, handleClose }) => {
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title">
-        Add Flavors
+        Add Tags
       </DialogTitle>
       <DialogContent>
         <Search
           freeSolo
           multiple
           filterSelectedOptions
-          search={'flavor'}
-          value={flavors}
+          search={'tag'}
+          value={tags}
           onChange={handleSearchChange}
           renderInput={handleRenderInput}
           renderTags={handleRenderTags}
@@ -80,5 +86,5 @@ const AddFlavorModal = ({ open, handleClose }) => {
   );
 }
 
-export default AddFlavorModal;
+export default AddTagsModal;
 

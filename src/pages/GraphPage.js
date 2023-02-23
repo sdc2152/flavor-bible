@@ -1,3 +1,4 @@
+import React from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
@@ -9,6 +10,7 @@ import Search from '../features/search/Search';
 import Graph from '../features/graph/Graph'
 import GraphDetail from '../features/graphDetail/GraphDetail';
 import PageGrid from '../common/PageGrid';
+import LinksMenu from '../features/linksMenu/LinksMenu';
 import {
   fetchFlavor,
   removeParentFlavor,
@@ -62,16 +64,19 @@ const GraphPage = () => {
   return (
     <PageGrid>
       <Box sx={{ bgcolor: 'background.paper' }}>
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2, display: 'flex' }}>
           <Search
+            sx={{ flexGrow: 1 }}
             freeSolo
             multiple
             filterSelectedOptions
+            search={'flavor'}
             value={parentFlavors}
             onChange={handleSearchChange}
             renderInput={handleRenderInput}
             renderTags={handleRenderTags}
             />
+          <LinksMenu />
         </Box>
         <Divider />
       </Box>

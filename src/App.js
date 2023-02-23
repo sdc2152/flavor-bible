@@ -1,86 +1,43 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 
 import '@fontsource/roboto/500.css';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
-import List from '@mui/material/List';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import Button from '@mui/material/Button';
 
-import Drawer from './features/drawer/Drawer';
 import AppBar from './features/appBar/AppBar';
-import DashboardListItems from './common/DashboardListItems';
-
-const drawerWidth = 240;
 
 const App = () => {
-  const [open, setOpen] = React.useState(false);
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar
         position="absolute"
-        open={open}
-        drawerwidth={drawerWidth}
         sx={{ boxShadow: 0, bgcolor: 'background.paper', color: 'primary.main' }}
       >
-        <Toolbar sx={{ pr: '24px' }}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={toggleDrawer}
-            sx={{
-              color: 'primary.main',
-              marginRight: '36px',
-              ...(open && { display: 'none' }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
+        <Toolbar>
           <Typography
             component="h1"
             variant="h6"
             color="inherit"
             noWrap
-            sx={{ flexGrow: 1 }}
           >
             Flavor Bible
           </Typography>
+
+          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            <Button component={Link} to={'/graph'}>Graph</Button>
+            <Button component={Link} to={'/flavor/page/1'}>Flavors</Button>
+          </Box>
+
         </Toolbar>
         <Divider />
       </AppBar>
-
-      <Drawer variant="permanent" open={open} width={drawerWidth}>
-        <Toolbar
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            px: [1],
-          }}
-        >
-          <IconButton onClick={toggleDrawer}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </Toolbar>
-        <Divider />
-        <List component="nav">
-          {DashboardListItems}
-        </List>
-        <Divider />
-      </Drawer>
-
       <Box
         component="main"
         sx={{
@@ -98,7 +55,6 @@ const App = () => {
         }}
       >
         <Toolbar />
-
         <Box>
           <Outlet />
         </Box>

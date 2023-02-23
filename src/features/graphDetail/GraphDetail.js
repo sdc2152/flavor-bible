@@ -1,9 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 import ContainedElement from "../../common/ContainedElement";
 import {
   selectParentFlavors,
@@ -20,9 +23,7 @@ const GraphDetail = () => {
   const links = useSelector(selectLinks, shallowEqual);
   const flavorsById = useSelector(selectFlavorsById);
 
-  const handleClick = (id) => {
-    dispatch(fetchFlavor(id));
-  }
+  const handleClick = (id) => () => dispatch(fetchFlavor(id));
 
   const childToParents = {};
   links.forEach((link) => {
@@ -41,8 +42,8 @@ const GraphDetail = () => {
 
   Object.entries(childToParents).forEach(([childId, parentIds]) => {
     const key = parentIds
-      .sort((id1, id2) => flavorsById[id1].name.localeCompare(flavorsById[id2].name))
-      .join('-');
+    .sort((id1, id2) => flavorsById[id1].name.localeCompare(flavorsById[id2].name))
+    .join('-');
     if (key in group) {
       group[key].childIds.push(childId);
     } else {
@@ -77,26 +78,28 @@ const GraphDetail = () => {
 
   return (
     <ContainedElement>
-      <div style={{
-        height: '100%',
-        display: 'grid',
-        gridTemplateRows: 'auto 1fr',
-      }}>
+      <Box
+        sx={{
+          p: 2,
+          height: '100%',
+          display: 'grid',
+          gridTemplateRows: 'auto 1fr',
+        }}>
 
-        <div>Header</div>
+        <Typography variant="h5" sx={{ flexGrow: 1 }}>Links</Typography>
 
         <ContainedElement style={{ overflowX: 'auto' }}>
-          <List>
+          <List sx={{ pt: 0 }}>
             {countIds.map((countId) => (
               count[countId].map((id) => (
                 <li key={id}>
                   <ul style={{ padding: '0' }}>
-                    <ListSubheader>
-                      <div>{group[id].title}</div>
-                      <div>Links: {countId}</div>
+                    <ListSubheader sx={{ backgroundColor: group[id].color }}>
+                      <Typography>{group[id].title}</Typography>
+                      <Typography>Links: {countId}</Typography>
                     </ListSubheader>
                     {group[id].childIds.map((childId) => (
-                      <ListItemButton key={childId} onClick={() => handleClick(childId)} dense>
+                      <ListItemButton key={childId} onClick={handleClick(childId)} dense>
                         <ListItemText primary={flavorsById[childId].name} />
                       </ListItemButton>
                     ))}
@@ -107,7 +110,7 @@ const GraphDetail = () => {
           </List>
         </ContainedElement>
 
-      </div>
+      </Box>
     </ContainedElement>
   );
 };

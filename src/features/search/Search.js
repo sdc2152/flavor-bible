@@ -6,19 +6,20 @@ import {
   selectOptions,
 } from './searchSlice';
 
-const Search = (props) => {
+const Search = ({ search = 'flavor', ...props }) => {
   const dispatch = useDispatch();
   const options = useSelector(selectOptions);
 
 
   const handleInputChange = (event, value) => {
     if (value) {
-      dispatch(fetchOptions(value));
+      dispatch(fetchOptions({ search, value }));
     } else {
       dispatch(clearOptions());
     }
   }
 
+  // TODO: implement filter options to exlude stuff
   return (
     <Autocomplete
       {...props}
@@ -27,7 +28,6 @@ const Search = (props) => {
       getOptionLabel={(option) => option.name}
       isOptionEqualToValue={(option, value) => option.name === value.name}
       filterOptions={(options, state) => {
-        console.log(options, state);
         return options;
       }}
     />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -22,6 +22,7 @@ import AddFlavorsModal from '../addFlavorsModal/AddFlavorsModal';
 import UnlinkFlavorsModal from '../unlinkFlavorsModal/UnlinkFlavorsModal';
 import { init as graphInit , fetchFlavors } from '../graph/graphSlice';
 import {
+  selectAdjacentFlavors,
   deleteFlavorAdjacent,
   fetchFlavorDetail,
   postFlavorAdjacent,
@@ -73,9 +74,10 @@ const MemoFlavorListItem = React.memo(
       && prevProps.select === newProps.select
   ));
 
-const AdjacentFlavors = ({ flavor, adjacent }) => {
+const FlavorAdjacent = ({ flavorId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const adjacent = useSelector(selectAdjacentFlavors(flavorId));
   const [openAdd, setOpenAdd] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState(false);
   const [select, setSelect] = React.useState(false);
@@ -87,10 +89,9 @@ const AdjacentFlavors = ({ flavor, adjacent }) => {
   const handleAddClose = (values) => {
     // TODO: exclude flavors already adjacent from add search
     if (values) {
-      console.log(values);
       const adjacentIds = values.map((adj) => adj.id);
-      dispatch(postFlavorAdjacent({ flavorId: flavor.id, adjacentIds }))
-        .then(() => dispatch(fetchFlavorDetail(flavor.id)));
+      dispatch(postFlavorAdjacent({ flavorId, adjacentIds }))
+        .then(() => dispatch(fetchFlavorDetail(flavorId)));
     }
     setOpenAdd(false);
   }
@@ -103,15 +104,15 @@ const AdjacentFlavors = ({ flavor, adjacent }) => {
   const handleDeleteClick = () => setOpenDelete(true);
   const handleDeleteClose = (isDelete) => {
     if (isDelete) {
-      dispatch(deleteFlavorAdjacent({ flavorId: flavor.id , adjacentIds: checked }))
-        .then(() => dispatch(fetchFlavorDetail(flavor.id)));
+      dispatch(deleteFlavorAdjacent({ flavorId , adjacentIds: checked }))
+        .then(() => dispatch(fetchFlavorDetail(flavorId)));
     }
     setOpenDelete(false);
   }
 
   const handleAddToChartClick = () => {
     dispatch(graphInit());
-    dispatch(fetchFlavors([flavor.id, ...checked]));
+    dispatch(fetchFlavors([flavorId, ...checked]));
     navigate('/graph');
   };
 
@@ -126,70 +127,69 @@ const AdjacentFlavors = ({ flavor, adjacent }) => {
     setChecked(newChecked);
   }
 
-  return (
-    <Box sx={{ height: '100%', p: 2, display: 'grid', gridTemplateRows: 'auto auto 1fr' }}>
-      <Box>
-        <AddFlavorsModal open={openAdd} handleClose={handleAddClose} />
-        <UnlinkFlavorsModal open={openDelete} handleClose={handleDeleteClose} />
-        <Box sx={{ display: 'flex' }}>
-          <Typography variant="h5" sx={{ flexGrow: 1 }}>Adjacent</Typography>
-          <Box>
-            <Button
-              startIcon={<AddIcon />}
-              onClick={handleAddClick}
-              disabled={select}
-            >
-              Add
-            </Button>
-            <Button
-              startIcon={<Check />}
-              onClick={handleSelectToggle}
-            >
-              Select
-            </Button>
-          </Box>
-        </Box>
-
-        {select
-          ? (
+  return adjacent
+    ? (
+      <Box sx={{ height: '100%', p: 2, display: 'grid', gridTemplateRows: 'auto auto 1fr' }}>
+        <Box>
+          <AddFlavorsModal open={openAdd} handleClose={handleAddClose} />
+          <UnlinkFlavorsModal open={openDelete} handleClose={handleDeleteClose} />
+          <Box sx={{ display: 'flex' }}>
+            <Typography variant="h5" sx={{ flexGrow: 1 }}>Adjacent</Typography>
             <Box>
-              <Button 
-                startIcon={<Delete />}
-                onClick={handleDeleteClick}
-                disabled={checked.length === 0}
+              <Button
+                startIcon={<AddIcon />}
+                onClick={handleAddClick}
+                disabled={select}
               >
-                Delete
+                Add
               </Button>
-              <Button 
-                startIcon={<Addchart />}
-                onClick={handleAddToChartClick}
-                disabled={checked.length === 0}
+              <Button
+                startIcon={<Check />}
+                onClick={handleSelectToggle}
               >
-                Graph
+                Select
               </Button>
             </Box>
-          )
-          : null}
+          </Box>
+
+          {select
+            ? (
+              <Box>
+                <Button 
+                  startIcon={<Delete />}
+                  onClick={handleDeleteClick}
+                  disabled={checked.length === 0}
+                >
+                  Delete
+                </Button>
+                <Button 
+                  startIcon={<Addchart />}
+                  onClick={handleAddToChartClick}
+                  disabled={checked.length === 0}
+                >
+                  Graph
+                </Button>
+              </Box>
+            )
+            : null}
+        </Box>
+        <Divider />
+        <ContainedElement style={{ overflowX: 'auto' }}>
+          <List>
+            {adjacent.map((adj) => (
+              <MemoFlavorListItem
+                key={adj.id}
+                flavor={adj}
+                select={select}
+                checked={checked}
+                handleCheckToggle={handleCheckToggle(adj)}
+                />
+            ))}
+          </List>
+        </ContainedElement>
       </Box>
-
-      <Divider />
-
-      <ContainedElement style={{ overflowX: 'auto' }}>
-        <List>
-          {adjacent.map((adj) => (
-            <MemoFlavorListItem
-              key={adj.id}
-              flavor={adj}
-              select={select}
-              checked={checked}
-              handleCheckToggle={handleCheckToggle(adj)}
-              />
-          ))}
-        </List>
-      </ContainedElement>
-    </Box>
-  );
+    ) : null;
 }
 
-export default AdjacentFlavors;
+export default FlavorAdjacent;
 

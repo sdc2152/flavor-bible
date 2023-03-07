@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import App from './App';
+import HomePage from './pages/HomePage';
 import GraphPage from './pages/GraphPage';
 import FlavorPage from './pages/FlavorPage';
 import FlavorDetailPage from './pages/FlavorDetailPage';
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <ErrorPage />,
     children: [
+      {
+        path: '',
+        element: <HomePage />,
+      },
       {
         path: 'graph',
         element: <GraphPage />,

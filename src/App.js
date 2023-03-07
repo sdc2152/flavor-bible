@@ -21,14 +21,16 @@ const App = () => {
         sx={{ boxShadow: 0, bgcolor: 'background.paper', color: 'primary.main' }}
       >
         <Toolbar>
-          <Typography
-            component="h1"
-            variant="h6"
-            color="inherit"
-            noWrap
-          >
-            Flavor Bible
-          </Typography>
+          <Button component={Link} to={'/'}>
+            <Typography
+              component="h1"
+              variant="h6"
+              color="inherit"
+              noWrap
+            >
+              Flavor Bible
+            </Typography>
+          </Button>
 
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             <Button component={Link} to={'/graph'}>Graph</Button>

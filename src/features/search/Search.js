@@ -1,3 +1,4 @@
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Autocomplete from '@mui/material/Autocomplete';
 import {
@@ -10,6 +11,10 @@ const Search = ({ search = 'flavor', ...props }) => {
   const dispatch = useDispatch();
   const options = useSelector(selectOptions);
 
+  React.useEffect(() => {
+    dispatch(clearOptions());
+    return () => dispatch(clearOptions());
+  }, [dispatch]);
 
   const handleInputChange = (event, value) => {
     if (value) {

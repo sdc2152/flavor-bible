@@ -9,6 +9,8 @@ const COLORS = [
   '#000000',
 ];
 
+const name = 'graph';
+
 const initialState = {
   flavors: {
     byId: {},
@@ -109,7 +111,7 @@ export const fetchFlavors = createAsyncThunk(
 )
 
 export const graphSlice = createSlice({
-  name: 'graph',
+  name,
   initialState,
   reducers: {
     init: (state, action) => initialState,
@@ -211,40 +213,39 @@ export const {
   removeAllFlavors,
 } = graphSlice.actions;
 
-export const selectFlavor = (state, id) => state.graph.flavors.byId[id];
+export const selectFlavor = (state, id) => state[name].flavors.byId[id];
 
-export const selectLink = (state, id) => state.graph.links.byId[id];
+export const selectLink = (state, id) => state[name].links.byId[id];
 
-export const selectFlavorsById = (state) => state.graph.flavors.byId;
+export const selectFlavorsById = (state) => state[name].flavors.byId;
 
 export const selectParentFlavorIds = (state) => (
-  state.graph.flavors.parentIds
+  state[name].flavors.parentIds
 );
 
 export const selectParentFlavors = (state) => (
-  state.graph.flavors.parentIds
+  state[name].flavors.parentIds
   .map((id) => selectFlavor(state, id))
 );
 
 export const selectAllFlavors = (state) => {
   // TODO: should i just do this in a query? yes
   //
-  // const minLink = state.graph.filter.minLink;
-  // const maxLink = state.graph.filter.maxLink;
+  // const minLink = state[name].filter.minLink;
+  // const maxLink = state[name].filter.maxLink;
   // // init filterids to just parent ids
   // // create hist of target links flavorId: linkCount
   // // add ids to filterids if their linkCount is high enough
-  return state.graph.flavors.allIds
+  return state[name].flavors.allIds
   .map((id) => selectFlavor(state, id))
 }
 
 export const selectLinks = (state) => (
-  state.graph.links.allIds
+  state[name].links.allIds
   .map((id) => selectLink(state, id))
 );
 
-export const selectFilterMinLink = (state) => state.graph.filter.minLink;
-export const selectFilterMaxLink = (state) => state.graph.filter.maxLink;
-
+export const selectFilterMinLink = (state) => state[name].filter.minLink;
+export const selectFilterMaxLink = (state) => state[name].filter.maxLink;
 
 export default graphSlice;

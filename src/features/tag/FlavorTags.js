@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import AddIcon from '@mui/icons-material/Add';
 import ContainedElement from '../../common/ContainedElement';
-import AddTagsModal from '../addTagsModal/AddTagsModal';
+import AddTagsModal from './AddTagsModal';
 import {
   fetchFlavorDetail,
   postTags,

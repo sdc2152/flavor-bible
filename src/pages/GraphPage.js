@@ -5,12 +5,13 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Unstable_Grid2';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 
 import Search from '../features/search/Search';
 import Graph from '../features/graph/Graph'
-import GraphDetail from '../features/graphDetail/GraphDetail';
+import GraphDetail from '../features/graph/GraphDetail';
 import PageGrid from '../common/PageGrid';
-import LinksMenu from '../features/linksMenu/LinksMenu';
+import LinksMenu from '../features/flavor/LinksMenu';
 import {
   fetchFlavor,
   removeParentFlavor,
@@ -76,7 +77,17 @@ const GraphPage = () => {
             renderInput={handleRenderInput}
             renderTags={handleRenderTags}
             />
-          <LinksMenu />
+          <Box
+            sx={{
+              p: 0.5,
+              pl: 1,
+              pr: 1,
+              gap: 1,
+              display: 'flex'
+            }}
+          >
+            <LinksMenu />
+          </Box>
         </Box>
         <Divider />
       </Box>

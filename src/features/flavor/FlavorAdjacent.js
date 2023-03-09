@@ -18,8 +18,8 @@ import Check from '@mui/icons-material/Check';
 import Addchart from '@mui/icons-material/Addchart';
 
 import ContainedElement from '../../common/ContainedElement';
-import AddFlavorsModal from '../addFlavorsModal/AddFlavorsModal';
-import UnlinkFlavorsModal from '../unlinkFlavorsModal/UnlinkFlavorsModal';
+import AddFlavorsModal from './AddAdjacentFlavorsModal';
+import UnlinkFlavorsModal from './UnlinkFlavorsModal';
 import { init as graphInit , fetchFlavors } from '../graph/graphSlice';
 import {
   selectAdjacentFlavors,

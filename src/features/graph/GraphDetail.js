@@ -6,19 +6,20 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import ContainedElement from "../../common/ContainedElement";
 import {
   selectParentFlavors,
   selectLinks,
   selectFlavorsById,
+  selectFilterMaxLink,
+  selectFilterMinLink,
   fetchFlavor,
-} from '../graph/graphSlice';
+} from './graphSlice';
 
 const GraphDetail = () => {
-
   const dispatch = useDispatch();
-
+  const maxLinks = useSelector(selectFilterMaxLink);
+  const minLinks = useSelector(selectFilterMinLink);
   const parents = useSelector(selectParentFlavors, shallowEqual);
   const links = useSelector(selectLinks, shallowEqual);
   const flavorsById = useSelector(selectFlavorsById);
@@ -39,7 +40,6 @@ const GraphDetail = () => {
 
   const groupIds = [];
   const group = {};
-
   Object.entries(childToParents).forEach(([childId, parentIds]) => {
     const key = parentIds
     .sort((id1, id2) => flavorsById[id1].name.localeCompare(flavorsById[id2].name))
@@ -70,11 +70,15 @@ const GraphDetail = () => {
         flavorsById[id1].name.localeCompare(flavorsById[id2].name)
       ));
   });
-
   countIds.forEach((id) => {
     count[id] = Array.from(count[id])
       .sort((k1, k2) => group[k1].title.localeCompare(group[k2].title));
   })
+
+  const totalChildren = groupIds.reduce((a, id) => a + group[id].childIds.length, 0);
+
+  const isFiltered = (countId) => (minLinks != null && countId < minLinks)
+    || (maxLinks != null && countId > maxLinks)
 
   return (
     <ContainedElement>
@@ -86,17 +90,23 @@ const GraphDetail = () => {
           gridTemplateRows: 'auto 1fr',
         }}>
 
-        <Typography variant="h5" sx={{ flexGrow: 1 }}>Links</Typography>
+        <Box>
+          <Typography variant="h5" sx={{ flexGrow: 1 }}>Links</Typography>
+          <Box>
+            <Typography>{totalChildren} Results</Typography>
+          </Box>
+        </Box>
 
         <ContainedElement style={{ overflowX: 'auto' }}>
           <List sx={{ pt: 0 }}>
-            {countIds.map((countId) => (
+            {countIds.map((countId) => isFiltered(countId) ? null : (
               count[countId].map((id) => (
                 <li key={id}>
                   <ul style={{ padding: '0' }}>
                     <ListSubheader sx={{ backgroundColor: group[id].color }}>
                       <Typography>{group[id].title}</Typography>
                       <Typography>Links: {countId}</Typography>
+                      <Typography>Results: {group[id].childIds.length}</Typography>
                     </ListSubheader>
                     {group[id].childIds.map((childId) => (
                       <ListItemButton key={childId} onClick={handleClick(childId)} dense>

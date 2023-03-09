@@ -6,9 +6,6 @@ import Menu from '@mui/material/Menu';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {
@@ -24,10 +21,11 @@ const LinksMenu = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const parentIds = useSelector(selectParentFlavorIds);
-  const minOptions = parentIds.map((id, i) => `${i + 1}`);
-  const maxOptions = parentIds.map((id, i) => `${i + 1}`);
+  const minOptions = parentIds.map((id, i) => `${i + 1}`).concat('Max');
+  const maxOptions = parentIds.map((id, i) => `${i + 1}`).concat('Max');
   const minValue = useSelector(selectFilterMinLink);
   const maxValue = useSelector(selectFilterMaxLink);
+
   let title = 'Links';
   if (minValue && maxValue) {
     title = `${minValue} - ${maxValue}`;
@@ -95,9 +93,6 @@ const LinksMenu = () => {
     >
       <Box>
         <Typography>Links</Typography>
-        <FormGroup>
-          <FormControlLabel control={<Switch defaultChecked />} label="Max" />
-        </FormGroup>
         <Box sx={{ display: 'flex' }}>
           <Autocomplete
             disablePortal

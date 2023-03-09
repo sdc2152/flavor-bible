@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 
-import AppBar from './features/appBar/AppBar';
+import AppBar from './common/appBar/AppBar';
 
 const App = () => {
   return (

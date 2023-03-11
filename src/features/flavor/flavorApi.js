@@ -13,6 +13,13 @@ const FlavorAPI = {
     fetch(`${BACKEND_URL}/api/flavor/${id}`)
     .then(parseJSON)
   ),
+  postFlavor: (values) => (
+    fetch(`${BACKEND_URL}/api/flavor`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', },
+      body: JSON.stringify(values)
+    }).then(parseJSON)
+  ),
   updateFlavor: (flavorId, values) => (
     fetch(`${BACKEND_URL}/api/flavor/${flavorId}`, {
       method: 'PATCH',

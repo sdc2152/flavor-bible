@@ -18,7 +18,7 @@ import Check from '@mui/icons-material/Check';
 import Addchart from '@mui/icons-material/Addchart';
 
 import ContainedElement from '../../common/ContainedElement';
-import AddFlavorsModal from './AddAdjacentFlavorsModal';
+import AddFlavorsAdjacentModal from './AddFlavorsAdjacentModal';
 import UnlinkFlavorsModal from './UnlinkFlavorsModal';
 import { init as graphInit , fetchFlavors } from '../graph/graphSlice';
 import {
@@ -105,7 +105,10 @@ const FlavorAdjacent = ({ flavorId }) => {
   const handleDeleteClose = (isDelete) => {
     if (isDelete) {
       dispatch(deleteFlavorAdjacent({ flavorId , adjacentIds: checked }))
-        .then(() => dispatch(fetchFlavorDetail(flavorId)));
+        .then(() => {
+          setChecked([]);
+          dispatch(fetchFlavorDetail(flavorId));
+        });
     }
     setOpenDelete(false);
   }
@@ -131,7 +134,7 @@ const FlavorAdjacent = ({ flavorId }) => {
     ? (
       <Box sx={{ height: '100%', p: 2, display: 'grid', gridTemplateRows: 'auto auto 1fr' }}>
         <Box>
-          <AddFlavorsModal open={openAdd} handleClose={handleAddClose} />
+          <AddFlavorsAdjacentModal open={openAdd} handleClose={handleAddClose} />
           <UnlinkFlavorsModal open={openDelete} handleClose={handleDeleteClose} />
           <Box sx={{ display: 'flex' }}>
             <Typography variant="h5" sx={{ flexGrow: 1 }}>Adjacent</Typography>

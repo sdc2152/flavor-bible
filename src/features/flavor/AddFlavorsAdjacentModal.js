@@ -9,7 +9,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Search from '../search/Search';
 import FocusTextField from '../../common/FocusTextField';
 
-const AddFlavorModal = ({ open, handleClose }) => {
+const AddFlavorsAdjacentModal = ({ open, handleClose }) => {
   const [flavors, setFlavors] = React.useState([]);
 
   const handleAdd = () => {
@@ -80,5 +80,5 @@ const AddFlavorModal = ({ open, handleClose }) => {
   );
 }
 
-export default AddFlavorModal;
+export default AddFlavorsAdjacentModal;
 

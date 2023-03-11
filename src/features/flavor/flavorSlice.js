@@ -51,7 +51,16 @@ const addLink = (state, link) => {
 
 // TODO: should update the state of app without doing a refresh call to flavor detail
 //       idk if api call should return a parsed json or what??
-//
+
+
+export const postFlavor = createAsyncThunk(
+  `${name}/postFlavor`,
+  async (values) => {
+    const response = await FlavorAPI.postFlavor(values);
+    return response;
+  }
+);
+
 export const updateFlavor = createAsyncThunk(
   `${name}/updateFlavor`,
   async ({flavorId, values}) => {
@@ -245,6 +254,18 @@ const flavorSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(updateFlavor.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+      })
+
+      // postFlavor
+      .addCase(postFlavor.pending, (state, action) => {
+        state.status = 'loading';
+      })
+      .addCase(postFlavor.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(postFlavor.fulfilled, (state, action) => {
         state.status = 'succeeded';
       })
   },

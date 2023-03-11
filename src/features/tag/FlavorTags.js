@@ -1,8 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -15,25 +13,23 @@ import {
   unlinkTags,
   selectTags,
 } from '../flavor/flavorSlice';
+import TagList from './TagList';
 
-const ListItem = styled('li')(({ theme }) => ({
-  margin: theme.spacing(0.3),
-}));
-
-const FlavorTags = ({ flavorId }) => {
+const FlavorTags = ({ flavorId, edit }) => {
   const dispatch = useDispatch();
   const tags = useSelector(selectTags(flavorId));
   const [tagsOpen, setTagsOpen] = React.useState(false);
 
-  const handleTagClick = (tag) => () => {
+  const handleTagClick = (tag) => {
     console.log('tag click', tag);
   }
-  const handleTagDelete = (tag) => () => {
+  const handleTagDelete = (tag) => {
     dispatch(unlinkTags({ flavorId, tagIds: [tag.id] }))
       .then(() => dispatch(fetchFlavorDetail(flavorId)));
   }
 
   const handleOpen = () => setTagsOpen(true);
+
   const handleClose = (values) => {
     if (values) {
       const tagNames = values.map((t) => t.name);
@@ -53,24 +49,7 @@ const FlavorTags = ({ flavorId }) => {
         </Box>
         <Divider />
         <ContainedElement style={{ overflowX: 'auto' }}>
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            listStyle: 'none',
-            mt: 1,
-            p: 0,
-          }} component="ul">
-            {tags.map((tag) => (
-              <ListItem key={tag.id}>
-                <Chip
-                  label={tag.name}
-                  onClick={handleTagClick(tag)}
-                  onDelete={handleTagDelete(tag)}
-                  />
-              </ListItem>
-            ))}
-          </Box>
+          <TagList tags={tags} onClick={handleTagClick} onDelete={handleTagDelete} />
         </ContainedElement>
       </Box>
     ) : null;

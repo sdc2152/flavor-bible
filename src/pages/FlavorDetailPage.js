@@ -6,12 +6,12 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-// import TextField from '@mui/material/TextField';
+import Fab from '@mui/material/Fab';
 import Input from '@mui/material/Input';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Cancel';
+import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import ContainedElement from '../common/ContainedElement';
 import defaultImage from '../common/images/default-image.png';
@@ -20,6 +20,7 @@ import FlavorTags from '../features/tag/FlavorTags';
 
 import {
   selectFlavor,
+  selectTags,
   fetchFlavorDetail,
   updateFlavor,
   init as flavorInit,
@@ -30,7 +31,9 @@ const FlavorDetailPage = () => {
   const theme = useTheme();
   const params = useParams();
   const flavorId = +params.id;
+
   const flavor = useSelector(selectFlavor(flavorId));
+
   const [edit, setEdit] = React.useState(false);
   const [nameValue, setNameValue] = React.useState(null);
 
@@ -71,6 +74,38 @@ const FlavorDetailPage = () => {
   return flavor
     ?
     <ContainedElement>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          p: 2,
+          gap: 1,
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0
+        }}
+      >
+        { edit
+          ?
+          <>
+            <Fab color="primary" aria-label="save" onClick={() => setEdit(false)}>
+              <SaveIcon />
+            </Fab>
+            <Fab color="primary" aria-label="delete" onClick={() => setEdit(false)}>
+              <DeleteIcon />
+            </Fab>
+            <Fab color="primary" aria-label="cancel" onClick={() => setEdit(false)}>
+              <CloseIcon />
+            </Fab>
+          </>
+          :
+          <Fab color="primary" aria-label="edit" onClick={() => setEdit(true)}>
+            <EditIcon />
+          </Fab>
+      }
+      </Box>
+
       <Container disableGutters sx={{ height: '100%', bgcolor: 'background.paper' }}>
         <Grid container sx={{ height: '100%' }}>
           <Grid md={7} sm={12} sx={{ borderRight: '1px solid', borderColor: 'divider' }}>
@@ -91,34 +126,23 @@ const FlavorDetailPage = () => {
                 />
               <Box sx={{ display: 'flex', gap: 1 }}>
                 {edit
-                  ? <>
-                    <Input
-                      autoFocus
-                      margin="dense"
-                      sx={{ ...theme.typography.h4 }}
-                      value={nameValue}
-                      onChange={handleFlavorNameChange}
+                  ?
+                  <Input
+                    autoFocus
+                    margin="dense"
+                    sx={{ ...theme.typography.h4 }}
+                    value={nameValue}
+                    onChange={handleFlavorNameChange}
                     />
-                    <Button startIcon={<SaveIcon />} onClick={handleSaveClick} >
-                      Save
-                    </Button>
-                    <Button startIcon={<CancelIcon />} onClick={handleCancelClick} >
-                      Cancel
-                    </Button>
-                    </>
-                  : <>
-                    <Typography sx={{ flexGrow: 1, mt: 1, mb: 1 }} variant="h4">{flavor.name}</Typography>
-                    <Button startIcon={<EditIcon />} onClick={handleEditClick} >
-                      Edit
-                    </Button>
-                  </>
+                  :
+                  <Typography sx={{ flexGrow: 1, mt: 1, mb: 1 }} variant="h4">{flavor.name}</Typography>
               }
               </Box>
-              <FlavorTags flavorId={flavorId} />
+              <FlavorTags flavorId={flavorId} edit={edit} />
             </Box>
           </Grid>
           <Grid md={5} sm={12}>
-            <FlavorAdjacent flavorId={flavorId} />
+            <FlavorAdjacent flavorId={flavorId} edit={edit} />
           </Grid>
         </Grid>
       </Container>

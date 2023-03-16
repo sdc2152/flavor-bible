@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router';
 import { useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Box from '@mui/material/Box';
@@ -23,11 +24,13 @@ import {
   selectTags,
   fetchFlavorDetail,
   updateFlavor,
+  deleteFlavor,
   init as flavorInit,
 } from '../features/flavor/flavorSlice';
 
 const FlavorDetailPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const theme = useTheme();
   const params = useParams();
   const flavorId = +params.id;
@@ -59,8 +62,14 @@ const FlavorDetailPage = () => {
     setEdit(true);
   }
   const handleSaveClick = () => {
+    console.log('save click');
+    // setEdit(false);
+    // dispatch(updateFlavor({ flavorId, values: { name: nameValue } }));
+  }
+  const handleDeleteClick = () => {
     setEdit(false);
-    dispatch(updateFlavor({ flavorId, values: { name: nameValue } }));
+    dispatch(deleteFlavor(flavorId))
+      .then(() => navigate('/flavor/page/1'));
   }
   const handleCancelClick = () => {
     setEdit(false);
@@ -89,18 +98,18 @@ const FlavorDetailPage = () => {
         { edit
           ?
           <>
-            <Fab color="primary" aria-label="save" onClick={() => setEdit(false)}>
+            <Fab color="primary" aria-label="save" onClick={handleSaveClick}>
               <SaveIcon />
             </Fab>
-            <Fab color="primary" aria-label="delete" onClick={() => setEdit(false)}>
+            <Fab color="error" aria-label="delete" onClick={handleDeleteClick}>
               <DeleteIcon />
             </Fab>
-            <Fab color="primary" aria-label="cancel" onClick={() => setEdit(false)}>
+            <Fab aria-label="cancel" onClick={handleCancelClick}>
               <CloseIcon />
             </Fab>
           </>
           :
-          <Fab color="primary" aria-label="edit" onClick={() => setEdit(true)}>
+          <Fab color="primary" aria-label="edit" onClick={handleEditClick}>
             <EditIcon />
           </Fab>
       }

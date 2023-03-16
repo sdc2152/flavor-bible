@@ -20,6 +20,11 @@ const FlavorAPI = {
       body: JSON.stringify(values)
     }).then(parseJSON)
   ),
+  deleteFlavor: (flavorId) => (
+    fetch(`${BACKEND_URL}/api/flavor/${flavorId}`, {
+      method: 'DELETE',
+    })
+  ),
   updateFlavor: (flavorId, values) => (
     fetch(`${BACKEND_URL}/api/flavor/${flavorId}`, {
       method: 'PATCH',

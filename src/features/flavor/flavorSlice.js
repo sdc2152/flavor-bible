@@ -23,6 +23,12 @@ const initialState = {
     current: null,
     total: null,
   },
+  form: {
+    image: null,
+    name: null,
+    adjacent: [],
+    tags: [],
+  },
   status: 'idle',
   error: null,
 };
@@ -52,6 +58,14 @@ const addLink = (state, link) => {
 // TODO: should update the state of app without doing a refresh call to flavor detail
 //       idk if api call should return a parsed json or what??
 
+
+export const deleteFlavor = createAsyncThunk(
+  `${name}/deleteFlavor`,
+  async (flavorId) => {
+    const response = await FlavorAPI.deleteFlavor(flavorId);
+    return response;
+  }
+);
 
 export const postFlavor = createAsyncThunk(
   `${name}/postFlavor`,
@@ -121,8 +135,15 @@ const flavorSlice = createSlice({
   name,
   initialState,
   reducers: {
-    init: (state, action) => {
-      return initialState;
+    init: (state, action) => initialState,
+    updateForm: (state, action) => ({ ...state.form, ...action.payload }),
+    updateFormName: (state, action) => { state.form.name = action.payload },
+    updateFormImage: (state, action) => { state.form.image = action.payload },
+    addFormTags: (state, action) => {
+
+    },
+    initForm: (state, action) => {
+      state.form = initialState.form;
     },
   },
   extraReducers(builder) {
@@ -271,7 +292,17 @@ const flavorSlice = createSlice({
   },
 });
 
-export const { init } = flavorSlice.actions;
+export const {
+  init,
+  updateForm,
+  updateFormName,
+  updateFormImage,
+  addFormTags,
+  removeFormTags,
+  addFormAdjacent,
+  removeFormAdjacent,
+  initForm,
+} = flavorSlice.actions;
 
 export const selectFlavor = (id) => (state) => state[name].flavors.byId[id];
 
